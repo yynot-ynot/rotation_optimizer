@@ -1,0 +1,483 @@
+/* ==========================================================================
+   Time Input and Calculate Button
+   --------------------------------------------------------------------------
+   - Provides user inputs for duration (minutes, seconds).
+   - Includes a calculate button to trigger rotation calculations.
+   - Displays output in #selection-display.
+   ========================================================================== */
+#time-input-container {
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.time-input-label {
+  display: inline-block;
+  margin-right: 1em;
+  font-weight: 500;
+  color: #aad4ff;
+  letter-spacing: 0.03em;
+}
+
+input[type="number"] {
+  width: 60px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #232527;
+  color: #fff;
+  font-size: 1em;
+  margin-left: 0.3em;
+  outline: none;
+}
+
+input[type="number"]:focus {
+  border-color: #7cc7ff;
+  box-shadow: 0 0 2px #7cc7ff66;
+}
+
+#calculate-btn {
+  margin-left: 1em;
+  padding: 0.3em 1em;
+  font-size: 1em;
+  background: #2582ca;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  box-shadow: 0 2px 6px #005cbf22;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+#calculate-btn:hover,
+#calculate-btn:focus {
+  background: #005cbf;
+  color: #ffce63;
+  outline: none;
+}
+
+#selection-display {
+  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: #232527;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0004;
+  color: #ffce63;
+  font-size: 1.12em;
+  min-height: 44px;
+}
+/* General Layout */
+body {
+  font-family: sans-serif;
+  padding: 1rem 2rem;
+  background: #181A1B !important;
+  color: #fff;
+}
+
+/* Heading Styling */
+h1 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+
+/* ==========================================================================
+   Job Sidebar: Layout and Section Headers
+   --------------------------------------------------------------------------
+   - Displays job icons grouped by role (Tank, Healer, DPS).
+   - Organized into rows of up to 4 icons, with labeled section headers.
+   - Responsive sidebar with expand/collapse behavior.
+   ========================================================================== */
+
+#job-sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  /* flush with the very top */
+  width: 310px;
+  min-width: 300px;
+  max-width: 420px;
+  height: 100%;
+  background: #22272b;
+  border-radius: 0 0 0 16px;
+  /* only bottom-left rounded so the top is flush */
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+  box-shadow: -2px 0 16px #0008;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transform: translateX(0);
+  transition: transform 0.25s cubic-bezier(.77, 0, .18, 1), width 0.18s, right 0.18s;
+  z-index: 200;
+  overflow-y: auto;
+}
+
+/* Collapsed (hidden) sidebar */
+#job-sidebar.collapsed {
+  transform: translateX(100%);
+  width: 70px;
+  right: 0;
+}
+
+/* Section header for each group */
+.job-group-header {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: #aef0ff;
+  margin-bottom: 0.45em;
+  margin-top: 0.6em;
+  margin-left: 0.1em;
+  letter-spacing: 0.03em;
+  grid-column: 1 / -1;
+  /* full row for header */
+}
+
+/* ==========================================================================
+   Persistent "Jobs" Label Toggle & Mini Icon List
+   --------------------------------------------------------------------------
+   - The entire #sidebar-label-container is clickable, not just the label text.
+   - Vertical stack: label on top, selected mini-icons beneath.
+   - Visible when sidebar is collapsed, disappears when open.
+   - Large clickable area, right-aligned, above sidebar.
+   ========================================================================== */
+#sidebar-label-container {
+  position: static;
+  right: unset;
+  top: unset;
+  width: 108px;
+  min-height: 40px;
+  z-index: auto;
+  background: #232527;
+  color: #7cc7ff;
+  border: 1px solid #333;
+  border-left: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  font-weight: bold;
+  font-size: 1.05rem;
+  text-align: center;
+  box-shadow: -2px 1px 8px 0 #0002;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding-bottom: 0.4rem;
+  /* margin-left: 4px; */
+  /* <-- Adds space between the two elements */
+}
+
+/* Jobs label at the top */
+#sidebar-label-container .label-text,
+#sidebar-jobs-label {
+  /* .label-text for new markup, #sidebar-jobs-label for backward compatibility */
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  font-weight: bold;
+  font-size: 1.05rem;
+  color: #2582ca;
+  background: none;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  outline: none;
+  /* Remove default button styles if present */
+  box-shadow: none;
+  text-align: center;
+  user-select: none;
+}
+
+/* Focus/active state for accessibility */
+#sidebar-label-container:active,
+#sidebar-label-container:focus,
+#sidebar-label-container .label-text:active,
+#sidebar-label-container .label-text:focus,
+#sidebar-jobs-label:active,
+#sidebar-jobs-label:focus {
+  background: #232527;
+  color: #005cbf;
+  outline: none;
+}
+
+/* Vertical mini-icon list beneath the label */
+#sidebar-selected-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.15rem;
+  margin-bottom: 0.2rem;
+}
+
+/* Each mini icon is small and has a subtle border/highlight */
+.mini-job-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #232527;
+  border: 1.5px solid #e3c17a;
+  box-shadow: 0 1px 4px #ffd07344;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-job-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: none;
+}
+
+.mini-job-color-line {
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+  width: 42px;
+  height: 4px;
+  border-radius: 2px;
+  /* No background here; set in JS per job */
+}
+
+/* ==========================================================================
+   Job Sidebar: Icon Container and Icon Rows
+   --------------------------------------------------------------------------
+   - #job-icons-container now flex-columns group sections,
+     not all icons flat in a single wrap row.
+   ========================================================================== */
+#job-icons-container {
+  display: flex;
+  flex-direction: column;
+  /* Stacks each group-section vertically */
+  gap: 1.2rem;
+  justify-content: flex-start;
+  /* Top-aligned, not centered vertically */
+  align-items: stretch;
+}
+
+.job-icon-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  /* Always row is full sidebar width */
+  justify-content: flex-start;
+  /* Or center if you want centered icons when fewer */
+  min-height: 64px;
+  /* At least one icon tall */
+}
+
+/* ==========================================================================
+   Job Sidebar: Icon Grid Slot (Shared Base)
+   --------------------------------------------------------------------------
+   - .icon-slot: Shared 64x64px cell for both single and paired job icons.
+   - Use for .job-icon and .paired-healer-icon for identical alignment/gap.
+   ========================================================================== */
+.icon-slot,
+.job-icon,
+.paired-healer-icon {
+  width: 54px;
+  height: 54px;
+  background: #1d2027;
+  border-radius: 12px;
+  margin-bottom: 0.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2.5px solid transparent;
+  transition: border 0.15s, box-shadow 0.18s;
+}
+
+/* Selection outline for any selected icon */
+.icon-slot.selected,
+.job-icon.selected,
+.paired-healer-icon.selected {
+  border-color: #82cfff;
+  box-shadow: 0 0 4px #45e1fc;
+}
+
+/* ==========================================================================
+   Single Job Icon Styles (inside .icon-slot)
+   ========================================================================== */
+.job-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+  background: #232527;
+}
+
+.job-icon .fallback-label {
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 64px;
+  white-space: normal;
+  padding: 0 2px;
+  background: #232527;
+  border-radius: 6px;
+}
+
+/* ==========================================================================
+   Paired Healer Icon Styles - Large Overlapping Badge Avatars
+   ========================================================================== */
+.paired-healer-icon {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  position: relative;
+}
+
+/* Center avatars in 64x64, but allow them to be big and overlap */
+.paired-healer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  position: relative;
+}
+
+/* Both avatars: same size, no border by default */
+.paired-healer-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #232527;
+  object-fit: cover;
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+  transition: box-shadow 0.13s;
+  border: none;
+  /* Remove border from all by default */
+}
+
+/* Only the second (front) avatar gets the border */
+.paired-healer-img+.paired-healer-img {
+  margin-left: -18px;
+  z-index: 2;
+  border: none;
+  /* Border only on front image */
+}
+
+/* Hide plus for overlap style */
+.paired-plus {
+  display: none !important;
+}
+
+/* Selected state matches singles */
+.paired-healer-icon.selected {
+  outline: 2.5px solid #ffce63;
+  outline-offset: 2px;
+  border-radius: 18px;
+  background: none;
+}
+
+/* ==========================================================================
+   Mini Icon Styles (collapsed sidebar)
+   ========================================================================== */
+.mini-job-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  background: #232527;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-healer-pair-img {
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: none;
+  object-fit: cover;
+  box-shadow: none;
+  position: relative;
+  transition: box-shadow 0.13s;
+}
+
+/* Default mini icon images */
+.mini-job-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: none;
+}
+
+/* Overlapping mini paired healer icons in collapsed sidebar label */
+.mini-healer-pair-mini {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* Remove gap for proper overlap */
+  gap: 0;
+  padding: 0 2px;
+}
+
+
+/* Overlap the second avatar on top of the first */
+.mini-healer-pair-img+.mini-healer-pair-img {
+  margin-left: -10px;
+  z-index: 2;
+}
+
+/* Optional: Remove border from the back icon for visual clarity */
+.mini-healer-pair-img:first-child {
+  border: none;
+}
+
+.paired-plus-mini {
+  display: none !important;
+}
+
+
+#sidebar-header-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 120;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height: 48px;
+  gap: 5px;
+  /* <-- This adds space between children */
+  /* No background, children have their own backgrounds */
+}
+
+#sidebar-label-container,
+#dps-type-label-container {
+  position: static;
+  top: unset;
+  right: unset;
+  z-index: auto;
+  margin: 0;
+  /* No individual margin needed */
+  /* All other styles unchanged */
+}

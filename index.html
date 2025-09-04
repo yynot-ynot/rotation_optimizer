@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>FFXIV Job Rotation Optimizer</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- pako for gzip support -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+  <!-- Plotly.js for plotting -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <!-- Main app launcher (ES module) -->
+  <script type="module" src="js/core/initLauncher.js"></script>
+  <link rel="icon" href="assets/favicon.ico" />
+</head>
+
+<body>
+
+  <h1>FFXIV Job Rotation Optimizer</h1>
+
+  <!-- ================================
+       Sidebar Header Bar (Right-top)
+       ================================ -->
+  <div id="sidebar-header-bar">
+    <!-- ==== Jobs Sidebar Toggle ==== -->
+    <div id="sidebar-label-container" tabindex="0" role="button" aria-label="Show/hide job sidebar">
+      <div id="sidebar-jobs-label">Job</div>
+      <div id="sidebar-selected-icons"></div>
+    </div>
+  </div>
+
+  <!-- ================================
+       Job Selection Sidebar
+       ================================ -->
+  <div id="job-sidebar" class="collapsed">
+    <h2>Jobs</h2>
+    <div id="job-icons-container">
+      <!-- Dynamically populated job icons go here -->
+    </div>
+  </div>
+
+  <!-- Time input and calculate controls -->
+  <div id="time-input-container">
+    <label class="time-input-label">Min:
+      <input type="number" id="input-min" min="0" max="60" value="0">
+    </label>
+    <label class="time-input-label">Sec:
+      <input type="number" id="input-sec" min="0" max="59" value="0">
+    </label>
+    <button id="calculate-btn">Calculate</button>
+  </div>
+
+  <!-- Area for output -->
+  <div id="selection-display"></div>
+
+</body>
+
+</html>
